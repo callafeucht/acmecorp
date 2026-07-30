@@ -3,11 +3,15 @@ output "alb_dns_name" {
 }
 
 output "api_url" {
-  value = "https://api-staging.${var.root_domain}"
+  value = "https://api.staging.${var.root_domain}"
 }
 
 output "web_url" {
-  value = "https://app-staging.${var.root_domain}"
+  value = "https://app.staging.${var.root_domain}"
+}
+
+output "staging_zone_name_servers" {
+  value = aws_route53_zone.staging.name_servers
 }
 
 output "db_endpoint" {

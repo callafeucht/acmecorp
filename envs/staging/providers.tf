@@ -11,6 +11,10 @@ terraform {
 provider "aws" {
   region = var.region
 
+  assume_role {
+    role_arn = var.tf_exec_role_arn
+  }
+
   default_tags {
     tags = {
       Environment = "staging"

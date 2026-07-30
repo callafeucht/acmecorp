@@ -11,8 +11,8 @@ variable "public_subnet_ids" {
   type = list(string)
 }
 
-variable "domain_name" {
-  description = "Root domain already registered/hosted in Route53, e.g. \"acmecorp.com\". ASSUMPTION: the hosted zone for this domain already exists in this AWS account."
+variable "route53_zone_id" {
+  description = "Zone ID of the Route53 hosted zone that owns var.services' host_header records. Caller creates/owns this zone; the module only writes records into it."
   type        = string
 }
 

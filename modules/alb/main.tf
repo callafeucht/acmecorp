@@ -6,11 +6,6 @@
 # Route53 zone) since it's a required part of standing up the listener,
 # and TLS is not optional for a product handling patient health data.
 
-data "aws_route53_zone" "this" {
-  name         = var.domain_name
-  private_zone = false
-}
-
 resource "aws_security_group" "alb" {
   name        = "${var.name}-alb"
   description = "ALB security group"
@@ -79,7 +74,7 @@ resource "aws_route53_record" "cert_validation" {
     }
   }
 
-  zone_id         = data.aws_route53_zone.this.zone_id
+  zone_id         = var.route53_zone_id
   name            = each.value.name
   type            = each.value.type
   records         = [each.value.record]
@@ -170,7 +165,7 @@ resource "aws_lb_listener_rule" "this" {
 resource "aws_route53_record" "service" {
   for_each = { for s in var.services : s.name => s }
 
-  zone_id = data.aws_route53_zone.this.zone_id
+  zone_id = var.route53_zone_id
   name    = each.value.host_header
   type    = "A"
 

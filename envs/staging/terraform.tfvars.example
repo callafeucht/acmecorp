@@ -4,8 +4,10 @@
 # provider key) lives in Secrets Manager, only its ARN goes here.
 
 region      = "us-east-1"
-domain_name = "acmecorp.com"          # ASSUMPTION: already hosted in Route53, see README
+root_domain = "acmecorp.com"          # this config creates and owns a delegated zone: staging.acmecorp.com
 github_repo = "acmecorp/acmecorp-app" # "org/repo" allowed to deploy via CI
+
+tf_exec_role_arn = "arn:aws:iam::ACCOUNT_ID:role/tf-exec" # output of bootstrap/staging
 
 api_image_tag    = "latest"
 web_image_tag    = "latest"

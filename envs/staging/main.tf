@@ -25,23 +25,27 @@ resource "aws_ecs_cluster" "this" {
   }
 }
 
+resource "aws_route53_zone" "staging" {
+  name = "staging.${var.root_domain}"
+}
+
 module "alb" {
   source            = "../../modules/alb"
   name              = local.name
   vpc_id            = module.networking.vpc_id
   public_subnet_ids = module.networking.public_subnet_ids
-  domain_name       = var.root_domain
+  route53_zone_id   = aws_route53_zone.staging.zone_id
 
   services = [
     {
       name              = "api"
-      host_header       = "api-staging.${var.root_domain}"
+      host_header       = "api.staging.${var.root_domain}"
       port              = 8080
       health_check_path = "/healthz"
     },
     {
       name              = "web"
-      host_header       = "app-staging.${var.root_domain}"
+      host_header       = "app.staging.${var.root_domain}"
       port              = 3000
       health_check_path = "/"
     },
@@ -109,7 +113,7 @@ module "ecs_web" {
 
   environment = {
     ENVIRONMENT  = "staging"
-    API_BASE_URL = "https://api-staging.${var.root_domain}"
+    API_BASE_URL = "https://api.staging.${var.root_domain}"
   }
 }
 

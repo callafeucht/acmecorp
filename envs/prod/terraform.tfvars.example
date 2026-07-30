@@ -1,8 +1,19 @@
 # Copy to terraform.tfvars and fill in real values before applying.
 
 region      = "us-east-1"
-domain_name = "acmecorp.com"          # ASSUMPTION: already hosted in Route53, see README
+root_domain = "acmecorp.com" # this config creates and owns the Route53 zone for it
 github_repo = "acmecorp/acmecorp-app"
+
+tf_exec_role_arn = "arn:aws:iam::ACCOUNT_ID:role/tf-exec" # output of bootstrap/production
+
+# Copy from `terraform output staging_zone_name_servers` in envs/staging
+# after staging's zone has been applied - see README.
+staging_zone_name_servers = [
+  "ns-000.awsdns-00.com",
+  "ns-000.awsdns-00.net",
+  "ns-000.awsdns-00.org",
+  "ns-000.awsdns-00.co.uk",
+]
 
 api_image_tag    = "latest" # in practice, pin to a specific tag/SHA for prod deploys
 web_image_tag    = "latest"

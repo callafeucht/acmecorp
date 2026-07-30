@@ -24,12 +24,24 @@ resource "aws_ecs_cluster" "this" {
   }
 }
 
+resource "aws_route53_zone" "root" {
+  name = var.root_domain
+}
+
+resource "aws_route53_record" "staging_delegation" {
+  zone_id = aws_route53_zone.root.zone_id
+  name    = "staging.${var.root_domain}"
+  type    = "NS"
+  ttl     = 172800
+  records = var.staging_zone_name_servers
+}
+
 module "alb" {
   source            = "../../modules/alb"
   name              = local.name
   vpc_id            = module.networking.vpc_id
   public_subnet_ids = module.networking.public_subnet_ids
-  domain_name       = var.root_domain
+  route53_zone_id   = aws_route53_zone.root.zone_id
 
   services = [
     {
