@@ -1,0 +1,11 @@
+# Copy to terraform.tfvars and fill in real values before applying.
+
+region      = "us-east-1"
+domain_name = "acmecorp.com"          # ASSUMPTION: already hosted in Route53, see README
+github_repo = "acmecorp/acmecorp-app"
+
+api_image_tag    = "latest" # in practice, pin to a specific tag/SHA for prod deploys
+web_image_tag    = "latest"
+worker_image_tag = "latest"
+
+sms_email_provider_secret_arn = "arn:aws:secretsmanager:us-east-1:ACCOUNT_ID:secret:acme-prod/sms-email-provider-key-XXXXXX"

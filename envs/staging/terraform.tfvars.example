@@ -1,0 +1,16 @@
+# Copy to terraform.tfvars and fill in real values before applying.
+# terraform.tfvars is gitignored (see .gitignore) since these are
+# environment-specific, not secret - the secret itself (the SMS/email
+# provider key) lives in Secrets Manager, only its ARN goes here.
+
+region      = "us-east-1"
+domain_name = "acmecorp.com"          # ASSUMPTION: already hosted in Route53, see README
+github_repo = "acmecorp/acmecorp-app" # "org/repo" allowed to deploy via CI
+
+api_image_tag    = "latest"
+web_image_tag    = "latest"
+worker_image_tag = "latest"
+
+# Create this secret once by hand (aws secretsmanager create-secret ...)
+# with the SMS/email provider's API key, then paste its ARN here.
+sms_email_provider_secret_arn = "arn:aws:secretsmanager:us-east-1:ACCOUNT_ID:secret:acme-staging/sms-email-provider-key-XXXXXX"
