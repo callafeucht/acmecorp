@@ -1,5 +1,11 @@
 # Networking module: one VPC with public subnets (for the ALB) and
-# private subnets (for ECS tasks and RDS), spread across 2 AZs.
+# private subnets (for ECS tasks and RDS), spread across var.az_count AZs.
+#
+# Subnet CIDRs are derived from var.vpc_cidr rather than passed in
+# separately - every environment uses the same tiering convention
+# (public in the low /24s, private starting at .10), so that layout is
+# encoded once here instead of being hand-written and kept in sync
+# across envs/staging, envs/prod, and eventually envs/dev.
 #
 # v1 simplicity tradeoff: a single NAT Gateway (not one per AZ). If an
 # AZ goes down, tasks in the other AZ still route out fine; if the NAT's
@@ -12,7 +18,13 @@ data "aws_availability_zones" "available" {
 }
 
 locals {
-  azs = slice(data.aws_availability_zones.available.names, 0, 2)
+  azs = slice(data.aws_availability_zones.available.names, 0, var.az_count)
+
+  # newbits = 8 turns a /16 into /24s. netnum 0,1,... for public;
+  # 10,11,... for private - the same gap-for-readability convention
+  # used when these were hand-written.
+  public_subnet_cidrs  = [for i in range(var.az_count) : cidrsubnet(var.vpc_cidr, 8, i)]
+  private_subnet_cidrs = [for i in range(var.az_count) : cidrsubnet(var.vpc_cidr, 8, i + 10)]
 }
 
 resource "aws_vpc" "main" {
@@ -36,7 +48,7 @@ resource "aws_internet_gateway" "main" {
 resource "aws_subnet" "public" {
   count                   = length(local.azs)
   vpc_id                  = aws_vpc.main.id
-  cidr_block              = var.public_subnet_cidrs[count.index]
+  cidr_block              = local.public_subnet_cidrs[count.index]
   availability_zone       = local.azs[count.index]
   map_public_ip_on_launch = true
 
@@ -49,7 +61,7 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "private" {
   count             = length(local.azs)
   vpc_id            = aws_vpc.main.id
-  cidr_block        = var.private_subnet_cidrs[count.index]
+  cidr_block        = local.private_subnet_cidrs[count.index]
   availability_zone = local.azs[count.index]
 
   tags = {

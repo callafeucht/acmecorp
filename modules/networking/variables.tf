@@ -4,19 +4,12 @@ variable "name" {
 }
 
 variable "vpc_cidr" {
-  description = "CIDR block for the VPC"
+  description = "CIDR block for the VPC. Required, no default - every environment must pick its own non-overlapping range (see README)."
   type        = string
-  default     = "10.0.0.0/16"
 }
 
-variable "public_subnet_cidrs" {
-  description = "CIDR blocks for public subnets, one per AZ (2 AZs used)"
-  type        = list(string)
-  default     = ["10.0.0.0/24", "10.0.1.0/24"]
-}
-
-variable "private_subnet_cidrs" {
-  description = "CIDR blocks for private subnets, one per AZ (2 AZs used)"
-  type        = list(string)
-  default     = ["10.0.10.0/24", "10.0.11.0/24"]
+variable "az_count" {
+  description = "Number of AZs to spread public/private subnets across"
+  type        = number
+  default     = 2
 }

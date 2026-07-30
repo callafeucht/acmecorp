@@ -1,10 +1,12 @@
 locals {
-  name = "acme-staging"
+  name     = "acme-staging"
+  vpc_cidr = "10.0.0.0/16"
 }
 
 module "networking" {
-  source = "../../modules/networking"
-  name   = local.name
+  source   = "../../modules/networking"
+  name     = local.name
+  vpc_cidr = local.vpc_cidr
 }
 
 module "ecr" {
