@@ -35,10 +35,10 @@ resource "aws_ecr_lifecycle_policy" "this" {
         rulePriority = 2
         description  = "Keep only the last 20 tagged images"
         selection = {
-          tagStatus     = "tagged"
+          tagStatus      = "tagged"
           tagPatternList = ["*"]
-          countType     = "imageCountMoreThan"
-          countNumber   = 20
+          countType      = "imageCountMoreThan"
+          countNumber    = 20
         }
         action = {
           type = "expire"
