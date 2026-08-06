@@ -110,8 +110,7 @@ once before step 3 above.
 ## Common tasks
 
 ### Deploy a new image
-There is no CI/CD pipeline in this repo yet — deploys are manual
-Terraform applies for now (see the [`ARCHITECTURE.md`](./ARCHITECTURE.md)'s limitations section).
+There is no CI/CD pipeline in this repo yet — deploys are manual.
 Build and push the image yourself, then bump the tag Terraform deploys:
 ```bash
 cd envs/staging
